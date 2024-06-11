@@ -1,4 +1,12 @@
-export function TextInput({ label, error, ...props }) {
+import { InputHTMLAttributes } from "react";
+
+export interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
+  label?: string;
+  error?: string;
+  success?: string;
+  startIcon?: JSX.Element;
+}
+export function TextInput({ label, error, ...props }: TextInputProps) {
   return (
     <div>
       <label

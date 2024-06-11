@@ -1,4 +1,5 @@
-import { FieldArray, Form, Formik } from "formik";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { FieldArray, Form, Formik, FormikProps } from "formik";
 import { useState } from "react";
 import { FaTrashAlt } from "react-icons/fa";
 import { TbMoodNerd } from "react-icons/tb";
@@ -8,10 +9,18 @@ import { Link } from "../../components/link";
 import { FieldNames } from "../../enums/field-name.enum";
 import { validationSchema } from "./schema.yup";
 
+export interface LinkFormData {
+  [FieldNames.Link]: string;
+  [FieldNames.Params]: {
+    [FieldNames.Key]: string;
+    [FieldNames.Value]: string;
+  }[];
+}
+
 export function MainPage(): JSX.Element {
   const [mountedUrl, setMountedUrl] = useState<string>();
 
-  async function handleSubmit(data): Promise<void> {
+  async function handleSubmit(data: LinkFormData): Promise<void> {
     let link = data.link.trim();
     let temporarySchemeAdded = false;
 
@@ -28,7 +37,7 @@ export function MainPage(): JSX.Element {
       return;
     }
 
-    data.params.forEach((param) => {
+    data.params.forEach((param: { key: string; value: string }) => {
       if (param.key && param.value) {
         url.searchParams.append(param.key, param.value);
       }
@@ -73,7 +82,7 @@ export function MainPage(): JSX.Element {
         enableReinitialize
         validationSchema={validationSchema}
       >
-        {({ values, handleChange, errors }) => (
+        {({ values, handleChange, errors }: FormikProps<LinkFormData>) => (
           <div>
             <Form>
               <div className="grid gap-6 mb-6 pt-4 pb-8 border-b">
@@ -96,14 +105,17 @@ export function MainPage(): JSX.Element {
               )}
 
               <FieldArray name={FieldNames.Params}>
-                {({ insert, remove, push }) => (
+                {({ remove, push }) => (
                   <div className="flex-column">
                     <div className="grid gap-4 lg:grid-cols-3 md:grid-cols-2">
                       {values.params.length > 0 &&
-                        values.params.map((param, index) => {
+                        values.params.map((_, index) => {
+                          const pErrors: any = errors?.params?.[index];
+
                           const fieldError =
-                            errors?.params?.[index]?.key ??
-                            errors?.params?.[index]?.value;
+                            pErrors?.[index]?.[FieldNames.Key] ??
+                            pErrors?.[index]?.[FieldNames.Value];
+
                           return (
                             <div className="border rounded p-4 ">
                               <div

@@ -1,6 +1,12 @@
 import { FaCheckCircle } from "react-icons/fa";
 
-export function Link({ title, onNewClick }): JSX.Element {
+export function Link({
+  title,
+  onNewClick,
+}: {
+  title: string;
+  onNewClick: () => void;
+}): JSX.Element {
   return (
     <div className="my-8">
       <span className="flex items-center gap-2 mb-2 text-sm font-medium text-gray-900 dark:text-white">
